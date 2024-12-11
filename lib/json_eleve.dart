@@ -92,6 +92,14 @@ class Movie {
 }
 
 
-class MovieDetailScreen extends StatefulWidget{
+class MovieDetailScreen extends StatefulWidget {
+  @override
+  _MovieDetailScreenState createState() => _MovieDetailScreenState();
+}
+
+class _MovieDetailScreenState extends State<MovieDetailScreen>{
+
+  _MovieDetailScreenState({required Movie, movies});
+
   
 }
