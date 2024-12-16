@@ -48,6 +48,12 @@ class _MovieListScreenState extends State<MovieListScreen> {
                   return ListTile(
                     title: Text(_movies[index].titre),
                     subtitle: Text(_movies[index].annee),
+                    onTap: (){
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (BuildContext context) => MovieDetailScreen(movie: _movies[index])),
+                      );
+                    },
                   );
                 },
               ),
@@ -80,26 +86,62 @@ class _MovieListScreenState extends State<MovieListScreen> {
 class Movie {
   String titre;
   String annee;
+  String imdbID;
 
-  Movie({required this.titre, required this.annee});
+  Movie({required this.titre, required this.annee, this.imdbID});
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       titre: json['Title'],
       annee: json['Year'],
+      imdbID: json['imdbID'],
     );
   }
 }
 
 
 class MovieDetailScreen extends StatefulWidget {
+  final Movie movie;
+  MovieDetailScreen({required this.movie});
   @override
+  
   _MovieDetailScreenState createState() => _MovieDetailScreenState();
 }
 
-class _MovieDetailScreenState extends State<MovieDetailScreen>{
-
-  _MovieDetailScreenState({required Movie, movies});
-
+class _MovieDetailScreenState extends State<MovieDetailScreen> {
+  TextEditingController _searchController = TextEditingController();
+  Map<String, dynamic>? _movieDetails;
+  bool _isLoading = true;
   
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.movie.titre ?? 'Details du film'),
+      ),
+      body: _isLoading
+      ? Center(child: CircularProgressIndicator())
+      : _movieDetails == null
+      ? Center(child: Text('Erreur de chargement'))
+      : Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Titre: ${_movieDetails!['Title']}',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold
+              )
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Année: ${_movieDetails!['Year']}'
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
