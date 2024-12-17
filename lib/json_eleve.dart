@@ -86,7 +86,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
 class Movie {
   String titre;
   String annee;
-  String imdbID;
+  String? imdbID;
 
   Movie({required this.titre, required this.annee, this.imdbID});
 
@@ -109,12 +109,13 @@ class MovieDetailScreen extends StatefulWidget {
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
-  TextEditingController _searchController = TextEditingController();
   Map<String, dynamic>? _movieDetails;
   bool _isLoading = true;
-  
+
   @override
   Widget build(BuildContext context) {
+    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.movie.titre ?? 'Details du film'),
@@ -128,6 +129,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            {_movieDetails!['Poster']} == "N/A"
+            ? _movieDetails!['Poster'] = Image.asset('Assets/Images/wp3316074.jpg')
+            : Image.network("${_movieDetails!['Poster']}"),
             Text(
               'Titre: ${_movieDetails!['Title']}',
               style: TextStyle(
@@ -139,9 +143,47 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             Text(
               'Année: ${_movieDetails!['Year']}'
             ),
+            SizedBox(height: 10),
+            Text(
+              'Genre: ${_movieDetails!['Genre']}'
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Réalisateur: ${_movieDetails!['Director']}'
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Résumé: ${_movieDetails!['Plot']}'
+            ),
           ],
         ),
       ),
     );
+    
+  }
+  Future<void> _getMovie() async {
+    const apiKey = '38fb1b90';
+    final apiUrl = 'http://www.omdbapi.com/?apikey=$apiKey&i=${widget.movie.imdbID}';
+
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+     
+      // print(_movieDetails);
+
+      setState(() {
+        _movieDetails = json.decode(response.body);
+        _isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load movies');
+    }
+  }
+
+    @override
+  void initState() {
+    super.initState();
+    _getMovie();
   }
 }
+
