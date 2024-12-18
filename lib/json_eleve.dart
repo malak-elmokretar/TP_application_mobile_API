@@ -8,6 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'OMDb API Demo',
       home: MovieListScreen(),
     );
@@ -130,10 +131,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             {_movieDetails!['Poster']} == "N/A"
-            ? _movieDetails!['Poster'] = Image.asset('Assets/Images/wp3316074.jpg')
+            ? Image.network("https://c8.alamy.com/compfr/p2a43f/photo-non-disponible-icone-vecteur-isole-sur-fond-transparent-photo-non-disponible-concept-logo-p2a43f.jpg")
+            // _movieDetails!['Poster'] = 'https://c8.alamy.com/compfr/p2a43f/photo-non-disponible-icone-vecteur-isole-sur-fond-transparent-photo-non-disponible-concept-logo-p2a43f.jpg'
             : Image.network("${_movieDetails!['Poster']}"),
             Text(
-              'Titre: ${_movieDetails!['Title']}',
+              '${_movieDetails!['Title']}',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold
@@ -152,6 +154,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               'Réalisateur: ${_movieDetails!['Director']}'
             ),
             SizedBox(height: 10),
+            // {_movieDetails!['Plot']} == "N/A" ? Text('Résumé: $indisponible') : 
             Text(
               'Résumé: ${_movieDetails!['Plot']}'
             ),
@@ -169,12 +172,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
     if (response.statusCode == 200) {
      
-      // print(_movieDetails);
 
       setState(() {
         _movieDetails = json.decode(response.body);
         _isLoading = false;
-      });
+        _movieDetails!['Poster'] == "N/A" ? _movieDetails!['Poster'] = "https://c8.alamy.com/compfr/p2a43f/photo-non-disponible-icone-vecteur-isole-sur-fond-transparent-photo-non-disponible-concept-logo-p2a43f.jpg"
+        : _movieDetails!['Poster'] == _movieDetails!['Poster'];
+        });
     } else {
       throw Exception('Failed to load movies');
     }
